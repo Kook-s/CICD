@@ -1,17 +1,17 @@
-name: HandScope to AWS
+name: Deploy to AWS
 
 on:
   push:
-    branches: [ main ] # main 브랜치에 푸시될 때 실행
+    branches: [ main ]
 
 env:
-  AWS_REGION: ap-northeast-2 # AWS 리전
-  ECR_REPOSITORY: handscope-server # ECR 저장소 이름
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: backend-portfolio
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       - uses: actions/checkout@v2
 
@@ -48,14 +48,12 @@ jobs:
         run: |
           aws ssm send-command \
             --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
-            --document-name "AWS-RunShellScript" \ 
+            --document-name "AWS-RunShellScript" \
             --parameters '{
               "commands": [
                 "docker stop handscope-server || true",
                 "docker rm handscope-server || true",
                 "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
-                "docker run -d --name handscope-server -p 8080:8080 
-                  -e JAVA_OPTS=-Xmx256m
-                  '$REGISTRY'/'$ECR_REPOSITORY':'$GITHUB_SHA'"
+                "docker run -d --name handscope-server -p 8080:8080 -e JAVA_OPTS=-Xmx256m $REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA"
               ]
             }'
