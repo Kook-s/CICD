@@ -2,32 +2,30 @@ name: HandScope to AWS
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ] # main 브랜치에 푸시될 때 실행
 
 env:
-  AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: handscope-server
+  AWS_REGION: ap-northeast-2 # AWS 리전
+  ECR_REPOSITORY: handscope-server # ECR 저장소 이름
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
+          distribution: 'adopt'
 
       - name: Build with Gradle
-        run: ./gradlew clean build -x test
+        run: ./gradlew build -x test
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -35,7 +33,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build and push Docker image
         env:
@@ -47,15 +45,17 @@ jobs:
       - name: Deploy to EC2 using SSM
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
           aws ssm send-command \
-            --instance-ids "${{ secrets.EC2_INSTANCE_ID }}" \
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name "AWS-RunShellScript" \
-            --parameters commands='[
-              "set -e",
-              "docker login --username AWS --password-stdin '"$REGISTRY"' <<< $(aws ecr get-login-password --region '"$AWS_REGION"')",
-              "docker pull '"$REGISTRY"'/'"$ECR_REPOSITORY"':'"$IMAGE_TAG"'",
-              "docker rm -f handscope-server || true",
-              "docker run -d --name handscope-server --restart=always -p 80:8080 -e JAVA_OPTS=\"-Xms256m -Xmx512m\" '"$REGISTRY"'/'"$ECR_REPOSITORY"':'"$IMAGE_TAG"'"
-            ]'
+            --parameters '{
+              "commands": [
+                "docker stop handscope-server || true",
+                "docker rm handscope-server || true",
+                "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
+                "docker run -d --name handscope-server -p 8080:8080 \
+                  -e JAVA_OPTS=-Xmx256m \
+                  '$REGISTRY'/'$ECR_REPOSITORY':'$GITHUB_SHA'"
+              ]
+            }'
