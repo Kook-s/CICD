@@ -12,8 +12,8 @@ services:
   neuro-bridge-db:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: neuro123
-      MYSQL_DATABASE: handscope
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     healthcheck:
