@@ -12,4 +12,9 @@ public class AppController {
     public String home() {
         return "Hello, World!";
     }
+
+    @GetMapping("/test1")
+    public String test1() {
+        return "Hello, test1";
+    }
 }
