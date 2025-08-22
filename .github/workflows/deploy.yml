@@ -46,16 +46,16 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          aws ssm send-command \
-            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
-            --document-name "AWS-RunShellScript" \
+          aws ssm send-command 
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} 
+            --document-name "AWS-RunShellScript" 
             --parameters '{
               "commands": [
                 "docker stop handscope-server || true",
                 "docker rm handscope-server || true",
                 "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
-                "docker run -d --name handscope-server -p 8080:8080 \
-                  -e JAVA_OPTS=-Xmx256m \
+                "docker run -d --name handscope-server -p 8080:8080 
+                  -e JAVA_OPTS=-Xmx256m
                   '$REGISTRY'/'$ECR_REPOSITORY':'$GITHUB_SHA'"
               ]
             }'
