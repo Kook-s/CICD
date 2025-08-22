@@ -15,6 +15,6 @@ public class AppController {
 
     @GetMapping("/test1")
     public String test1() {
-        return "Hello, test";
+        return "Hello, test 확잉용";
     }
 }
