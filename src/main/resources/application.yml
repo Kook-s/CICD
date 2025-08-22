@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: local
+  datasource:
+    url: jdbc:mysql://neuro-bridge-db:3306/handscope
+    username: root
+    password: neuro123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        # show_sql: true
+        format_sql: true
+        use_sql_comments: true
+    defer-datasource-initialization: true
+
+  # schema.sql / data.sql
+  sql:
+    init:
+      mode: always
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
