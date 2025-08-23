@@ -25,3 +25,8 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
 #  org.hibernate.type: trace
+
+# OpenAI API
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
