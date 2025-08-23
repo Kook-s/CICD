@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://neuro-bridge-db:3306/handscope
     username: root
-    password: ${MYSQL_ROOT_PASSWORD}
+    password: neuro123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

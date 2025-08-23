@@ -1,4 +1,4 @@
-package kr.handscope.controller;
+package kr.handscope.interfaces.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,5 +11,10 @@ public class AppController {
     @GetMapping("/home")
     public String home() {
         return "Hello, World!";
+    }
+
+    @GetMapping("/test1")
+    public String test1() {
+        return "Hello, test";
     }
 }

@@ -1,6 +1,7 @@
 services:
   # SpringBoot
   neuro-bridge-server:
+    container_name: handscope-server
     build: .
     ports:
       - 8080:8080
@@ -10,6 +11,7 @@ services:
 
   # MySQL
   neuro-bridge-db:
+    container_name: handscope-db
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
