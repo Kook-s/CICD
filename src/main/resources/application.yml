@@ -2,7 +2,7 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://neuro-bridge-db:3306/handscope
+    url: jdbc:mysql://localhost:3306/handscope
     username: root
     password: neuro123
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,6 +21,10 @@ spring:
   sql:
     init:
       mode: always
+
+  # .env import
+  config:
+    import: optional:file:.env[.properties]
 
 logging.level:
   org.hibernate.SQL: debug

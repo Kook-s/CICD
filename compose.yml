@@ -1,13 +1,13 @@
 services:
-  # SpringBoot
-  neuro-bridge-server:
-    container_name: handscope-server
-    build: .
-    ports:
-      - 8080:8080
-    depends_on:
-      neuro-bridge-db:
-        condition: service_healthy
+  #  # SpringBoot
+  #  neuro-bridge-server:
+  #    container_name: handscope-server
+  #    build: .
+  #    ports:
+  #      - 8080:8080
+  #    depends_on:
+  #      neuro-bridge-db:
+  #        condition: service_healthy
 
   # MySQL
   neuro-bridge-db:
@@ -18,8 +18,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping"]
-      interval: 5s
-      retries: 10
+#    healthcheck:
+#      test: ["CMD", "mysqladmin", "ping"]
+#      interval: 5s
+#      retries: 10
 
