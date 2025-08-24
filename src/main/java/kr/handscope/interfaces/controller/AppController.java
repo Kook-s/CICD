@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+// test code
 @RestController
 @RequestMapping("/v1")
 public class AppController {
@@ -15,6 +17,6 @@ public class AppController {
 
     @GetMapping("/test1")
     public String test1() {
-        return "Hello, test";
+        return "Hello, test 확잉용";
     }
 }

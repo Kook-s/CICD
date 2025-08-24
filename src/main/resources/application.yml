@@ -34,3 +34,15 @@ logging.level:
 openai:
   api:
     key: ${OPENAI_API_KEY}
+
+#Swagger
+springdoc:
+  swagger-ui:
+    groups-order: DESC              # API 그룹 순서 → 내림차순 정렬
+    tags-sorter: alpha              # 태그 정렬 방식 (alpha=알파벳순)
+    operations-sorter: method       # API 메서드 정렬 방식 (method=HTTP 메서드 순)
+    display-request-duration: true  # 요청 시간 표시 (추가 옵션)
+    doc-expansion: none             # 초기 Swagger UI에서 API 문서 열림 상태 (none/ list/ full)
+    persist-authorization: true     # 토큰 입력값 유지 여부 (페이지 새로고침 시 유지)
+  api-docs:
+    enabled: true
