@@ -38,5 +38,6 @@ out/
 
 ### db, docker
 .env
-
 .github/
+.github/workflows/deploy.yml
+
