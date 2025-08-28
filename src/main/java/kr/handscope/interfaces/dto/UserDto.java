@@ -3,6 +3,7 @@ package kr.handscope.interfaces.dto;
 import kr.handscope.domain.user.model.User;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class UserDto {

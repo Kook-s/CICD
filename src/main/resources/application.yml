@@ -46,3 +46,10 @@ springdoc:
     persist-authorization: true     # 토큰 입력값 유지 여부 (페이지 새로고침 시 유지)
   api-docs:
     enabled: true
+
+#JWT TOKEN
+jwt:
+  secret: dOq+MMVqHqeZDsTOv/WxwlbV7STx51rkIG4n06q4whs=
+
+
+token-validity-in-seconds: 86400  # 24시간

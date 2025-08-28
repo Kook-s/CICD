@@ -31,6 +31,10 @@ public class UserEntity {
     private LocalDateTime birth;
     private LocalDateTime createAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<MeasurementEntity> measurement = new ArrayList<>();
 
