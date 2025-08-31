@@ -1,42 +1,27 @@
 package kr.handscope.interfaces.controller.user;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import kr.handscope.domain.user.model.User;
-import kr.handscope.domain.user.service.UserService;
-import kr.handscope.interfaces.dto.UserDto;
+import kr.handscope.domain.member.service.MemberService;
+import kr.handscope.interfaces.dto.MemberDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/user")
 @RequiredArgsConstructor
-public class UserController {
+public class MemberController {
 
-    private final UserService userService;
+    private final MemberService memberService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody UserDto.LoginRequest request) {
-        String token = userService.login(request);
+    public ResponseEntity<Map<String, String>> login(@RequestBody MemberDto.LoginRequest request) {
+        String token = memberService.login(request);
 
-        ResponseCookie cookie = ResponseCookie.from("ACCESS_TOKEN", token)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
-                .path("/")
-                .maxAge(3600)
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .build();
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     @PostMapping("/logout")

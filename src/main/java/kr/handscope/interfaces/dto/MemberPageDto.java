@@ -1,4 +1,4 @@
 package kr.handscope.interfaces.dto;
 
-public class MeasurementDto {
+public class MemberPageDto {
 }

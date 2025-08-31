@@ -1,9 +1,10 @@
 package kr.handscope.support.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import kr.handscope.domain.member.model.Member;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,50 +14,48 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
-public class JwtTokenProvider {
+public class JwtTokenUtil {
 
     private final Key key;
     private final long tokenValidityInMilliseconds;
 
-    public JwtTokenProvider(
+    public JwtTokenUtil(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.token-validity-in-seconds:86400}") long tokenValidityInSeconds
     ) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
         this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
     }
 
-    public String createToken(String email) {
+    // 요청시 생성
+    public String createToken(Member member) {
+
+        Claims claims = Jwts.claims();
+        claims.put("id", member.id());
+        claims.put("email", member.email());
+        claims.put("name", member.username());
+        claims.put("auth", "ROLE_" +member.role()); //user, admin
+
+
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims)
+                .setSubject(member.email())
                 .setIssuedAt(now)
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token);
-
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
+    // 토큰 검증
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
 
@@ -72,6 +71,28 @@ public class JwtTokenProvider {
 
         UserDetails principal = new User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return true;
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.warn("Unsupported JWT: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.warn("Invalid JWT: {}", e.getMessage());
+        } catch (SignatureException e) {
+            log.warn("JWT signature does not match: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("JWT token is null or empty");
+        }
+        return false;
     }
 
     private Claims parseClaims(String token) {

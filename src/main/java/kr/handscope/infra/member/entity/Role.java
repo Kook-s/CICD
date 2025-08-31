@@ -1,4 +1,4 @@
-package kr.handscope.infra.user.entity;
+package kr.handscope.infra.member.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

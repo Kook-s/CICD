@@ -1,7 +1,7 @@
 package kr.handscope.support.config;
 
 import kr.handscope.support.jwt.JwtAuthenticationFilter;
-import kr.handscope.support.jwt.JwtTokenProvider;
+import kr.handscope.support.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,15 +19,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenUtil jwtTokenUtil;
+    private static final String[] SWAGGER_WHITELIST = {
+            "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**"
+    };
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtTokenProvider);
+        return new JwtAuthenticationFilter(jwtTokenUtil);
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -37,11 +41,11 @@ public class SecurityConfig {
                                 "/v1/sign"
                         ).permitAll()
                         .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-resources/**",
-                                "/webjars/**"
-                        ).permitAll()
+                                "/v1/home"
+                        ).hasRole("USER").requestMatchers(
+                                "/v1/test1"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(SWAGGER_WHITELIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
