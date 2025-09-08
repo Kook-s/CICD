@@ -46,8 +46,8 @@ Handscope 프로젝트는 노인 비율이 높은 의성에서 노인 층의 뇌
 - 렌더링 페이지
 
 ## 3. Document
-### 3.1 [Handscope_기획서](./doc/핸드스코드_기획서.pdf)
-### 3.2 [Handscope_PPT](./doc/핸드스코드_발표.pdf)
+### 3.1 [Handscope_기획서](./doc/핸드스코프_기획서.pdf)
+### 3.2 [Handscope_PPT](./doc/핸드스코프_발표.pdf)
 ### 3.3 [Handscope_설문](https://form.naver.com/response/LWxRq8-sKbRRFq8SF-YfXw)
 ### 3.4 서비스 플로우
 ```mermaid
