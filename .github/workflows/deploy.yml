@@ -54,7 +54,7 @@ jobs:
               "commands": [
                 "docker stop handscope-server || true",
                 "docker rm handscope-server || true",
-                "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
+                "aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}"
             
               ]
             }'
